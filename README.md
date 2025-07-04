@@ -65,6 +65,8 @@ Override `git` command to include confirmation prompts.
 
 ![git commit --no-verify](image.png)
 
+zsh example:
+
 ```zsh
 # Override git push -f and commit --no-verify
  git() {
