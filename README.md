@@ -76,11 +76,11 @@ fi
 
 ## Platform Support
 
-| Platform | Status | Authentication Method |
-|----------|--------|---------------------|
-| macOS    | ✅ Supported | Touch ID |
-| Linux    | 🚧 Planned | PAM + fprintd |
-| Windows  | 🚧 Planned | Windows Hello |
+| Platform | Status | Authentication Method | Issue |
+|----------|--------|---------------------|-------|
+| macOS    | ✅ Supported | Touch ID | - |
+| Linux    | 🚧 Planned | PAM + fprintd | [#1](https://github.com/azu/confirm-pam/issues/1) |
+| Windows  | 🚧 Planned | Windows Hello | [#2](https://github.com/azu/confirm-pam/issues/2) |
 
 ## Requirements
 
@@ -90,6 +90,33 @@ fi
 - Touch ID must be configured in System Preferences
 
 ## Development
+
+### Using Make Commands
+
+```bash
+# Show available commands
+make help
+
+# Build the project
+make build
+
+# Run all tests (unit + lint + format check)
+make test
+
+# Run Touch ID integration tests (requires user interaction)
+make dev-test
+
+# Clean build artifacts
+make clean
+
+# Install to system PATH
+make install
+
+# Create a release (tag + build)
+make release
+```
+
+### Using Cargo Directly
 
 ```bash
 # Run tests

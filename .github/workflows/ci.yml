@@ -33,3 +33,4 @@ jobs:
     
     - name: Build
       run: cargo build --release
+EOF < /dev/null

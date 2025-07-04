@@ -18,3 +18,9 @@ pam = "0.8"
 
 [target.'cfg(target_os = "windows")'.dependencies]
 windows = { version = "0.58", features = ["Win32_Security_Credentials", "Security_Credentials_UI"] }
+
+[package.metadata.release]
+publish = false
+pre-release-replacements = [
+  {file="README.md", search="confirm-pam [0-9\\.]+", replace="confirm-pam {{version}}"},
+]
