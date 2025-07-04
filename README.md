@@ -61,30 +61,41 @@ fi
 
 ### Git Hook Example
 
-Create `.git/hooks/pre-commit`:
+Override `git` command to include confirmation prompts.
 
-```bash
-#!/bin/bash
-# Prevent --no-verify without biometric confirmation
-if [[ "$GIT_PARAMS" == *"--no-verify"* ]]; then
-    if ! confirm-pam "Allow bypassing git hooks with --no-verify?"; then
-        echo "❌ Touch ID authentication required to use --no-verify"
-        exit 1
-    fi
-fi
+![git commit --no-verify](image.png)
+
+```zsh
+# Override git push -f and commit --no-verify
+ git() {
+   if [[ $@ == *'push'* && $@ == *'-f'* ]]; then
+     echo "Use git push --force-with-lease --force-if-includes instead"
+   elif [[ $@ == *'commit'* && $@ == *'--no-verify'* ]]; then
+     if confirm-pam "Allow commit with --no-verify?"; then
+       echo "Authenticated - proceeding with commit"
+       preexec_git_global_hooks # add commit hook
+       command git "$@"
+     else
+       echo "Authentication failed or cancelled"
+       return 1
+     fi
+   else
+     preexec_git_global_hooks # add commit hook
+     command git "$@"
 ```
 
 ## Platform Support
 
-| Platform | Status | Authentication Method | Issue |
-|----------|--------|---------------------|-------|
-| macOS    | ✅ Supported | Touch ID | - |
-| Linux    | 🚧 Planned | PAM + fprintd | [#1](https://github.com/azu/confirm-pam/issues/1) |
-| Windows  | 🚧 Planned | Windows Hello | [#2](https://github.com/azu/confirm-pam/issues/2) |
+| Platform | Status       | Authentication Method | Issue                                             |
+| -------- | ------------ | --------------------- | ------------------------------------------------- |
+| macOS    | ✅ Supported | Touch ID              | -                                                 |
+| Linux    | 🚧 Planned   | PAM + fprintd         | [#1](https://github.com/azu/confirm-pam/issues/1) |
+| Windows  | 🚧 Planned   | Windows Hello         | [#2](https://github.com/azu/confirm-pam/issues/2) |
 
 ## Requirements
 
 ### macOS
+
 - macOS 10.12.2 or later
 - Touch ID capable device
 - Touch ID must be configured in System Preferences
