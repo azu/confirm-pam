@@ -16,6 +16,12 @@ A CLI tool for biometric authentication confirmation.
 
 ## Installation
 
+### From crates.io (Recommended)
+
+```bash
+cargo install confirm-pam
+```
+
 ### From Source
 
 ```bash
@@ -26,12 +32,6 @@ cargo build --release
 
 # Copy to PATH
 sudo cp target/release/confirm-pam /usr/local/bin/
-```
-
-### Homebrew
-
-```bash
-brew install azu/confirm-pam/confirm-pam
 ```
 
 ## Usage
@@ -137,49 +137,49 @@ cargo clippy
 
 ## Release Process
 
-This project uses **fully automated releases** via GitHub Actions:
+This project uses **local manual releases** with make commands:
 
-### Automated Release (Recommended)
+### Release Commands
 
-1. **Trigger Release Workflow**:
-   - Go to [Actions → Create Release](https://github.com/azu/confirm-pam/actions/workflows/release-workflow.yml)
-   - Click "Run workflow"
-   - Select release type: `patch`, `minor`, or `major`
-   - Click "Run workflow"
+```bash
+# Patch release (0.1.0 → 0.1.1): Bug fixes, small improvements
+make release-patch
 
-2. **What happens automatically**:
-   - ✅ Version bumped in `Cargo.toml`
-   - ✅ Git tag created and pushed
-   - ✅ GitHub release with binaries created
-   - ✅ Homebrew formula update triggered
+# Minor release (0.1.0 → 0.2.0): New features, enhancements
+make release-minor
 
-3. **Final manual step**:
-   - Review and merge the auto-generated Homebrew formula PR
+# Major release (0.1.0 → 1.0.0): Breaking changes, major releases
+make release-major
+```
 
-### Manual Release (Legacy)
+### What happens automatically
+
+1. ✅ Version bumped in `Cargo.toml` using semver
+2. ✅ Git tag created and pushed
+3. ✅ Published to crates.io
+4. ✅ GitHub release created with binaries
+
+### Manual Release Steps
 
 <details>
 <summary>For manual control over release process</summary>
 
-1. **Manual Steps**:
-   ```bash
-   # Update version and changelog manually
-   git tag v0.x.x
-   git push origin v0.x.x
-   ```
+```bash
+# 1. Update version manually in Cargo.toml
+# 2. Commit and tag
+git add Cargo.toml
+git commit -m "chore: release v0.x.x"
+git tag v0.x.x
+git push origin main
+git push origin v0.x.x
 
-2. **Homebrew Update**:
-   - Go to [Actions → Update Homebrew Formula](https://github.com/azu/confirm-pam/actions/workflows/update-homebrew.yml)
-   - Enter release tag and run workflow
-   - Create PR from generated branch: `gh pr create --base main --head update-homebrew-X.X.X`
+# 3. Publish to crates.io
+cargo publish
+
+# 4. Create GitHub release (manual via web interface)
+```
 
 </details>
-
-### Release Types
-
-- **patch** (0.1.0 → 0.1.1): Bug fixes, small improvements
-- **minor** (0.1.0 → 0.2.0): New features, enhancements  
-- **major** (0.1.0 → 1.0.0): Breaking changes, major releases
 
 ## Contributing
 
