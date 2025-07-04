@@ -74,11 +74,10 @@ zsh example:
      echo "Use git push --force-with-lease --force-if-includes instead"
    elif [[ $@ == *'commit'* && $@ == *'--no-verify'* ]]; then
      if confirm-pam "Allow commit with --no-verify?"; then
-       echo "Authenticated Failed - Disallow commit by human. Please wait..."
        preexec_git_global_hooks # add commit hook
        command git "$@"
      else
-       echo "Authentication failed or cancelled"
+      echo "Authenticated Failed - Disallow commit by human. Please wait..."
        return 1
      fi
    else
