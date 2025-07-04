@@ -149,7 +149,6 @@ This project uses **fully automated releases** via GitHub Actions:
 
 2. **What happens automatically**:
    - ✅ Version bumped in `Cargo.toml`
-   - ✅ `CHANGELOG.md` updated with recent commits
    - ✅ Git tag created and pushed
    - ✅ GitHub release with binaries created
    - ✅ Homebrew formula update triggered

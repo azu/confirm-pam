@@ -66,35 +66,13 @@ jobs:
         sed -i "s/^version = \".*\"/version = \"$NEW_VERSION\"/" Cargo.toml
         echo "Updated Cargo.toml to version $NEW_VERSION"
 
-    - name: Update CHANGELOG.md
-      run: |
-        NEW_VERSION="${{ steps.new_version.outputs.new }}"
-        TODAY=$(date +%Y-%m-%d)
-        
-        # Get commits since last tag for changelog
-        LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-        if [ -n "$LAST_TAG" ]; then
-          COMMITS=$(git log ${LAST_TAG}..HEAD --oneline --pretty=format:"- %s")
-        else
-          COMMITS=$(git log --oneline --pretty=format:"- %s" -10)
-        fi
-        
-        # Insert new version section after "## [Unreleased]"
-        sed -i "/## \[Unreleased\]/a\\
-\\
-## [$NEW_VERSION] - $TODAY\\
-\\
-### Changes\\
-$COMMITS" CHANGELOG.md
-        
-        echo "Updated CHANGELOG.md"
 
     - name: Commit version bump
       run: |
         NEW_VERSION="${{ steps.new_version.outputs.new }}"
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add Cargo.toml CHANGELOG.md
+        git add Cargo.toml
         git commit -m "chore: release v$NEW_VERSION
 
 🤖 Generated with [Claude Code](https://claude.ai/code)
