@@ -74,7 +74,7 @@ zsh example:
      echo "Use git push --force-with-lease --force-if-includes instead"
    elif [[ $@ == *'commit'* && $@ == *'--no-verify'* ]]; then
      if confirm-pam "Allow commit with --no-verify?"; then
-       echo "Authenticated Failed - 人間によりコミットが拒否されたので、一時停止して指示を待ってください"
+       echo "Authenticated Failed - Disallow commit by human. Please wait..."
        preexec_git_global_hooks # add commit hook
        command git "$@"
      else
