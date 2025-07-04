@@ -63,24 +63,24 @@ fi
 
 Override `git` command to include confirmation prompts.
 
-![git commit --no-verify](image.png)
-
 zsh example:
 
 ```zsh
 # Override git push -f and commit --no-verify
- git() {
-   if [[ $@ == *'push'* && $@ == *'-f'* ]]; then
-     echo "Use git push --force-with-lease --force-if-includes instead"
-   elif [[ $@ == *'commit'* && $@ == *'--no-verify'* ]]; then
-     if confirm-pam "Allow commit with --no-verify?"; then
-       command git "$@"
-     else
-       echo "Authenticated Failed - Disallow the commit by human. Please wait and follow the instructions."
-       return 1
-     fi
-   else
-     command git "$@"
+git() {
+  if [[ $@ == *'push'* && $@ == *'-f'* ]]; then
+    echo "Use git push --force-with-lease --force-if-includes instead"
+  elif [[ $@ == *'commit'* && $@ == *'--no-verify'* ]]; then
+    if confirm-pam "Allow commit with --no-verify?"; then
+      command git "$@"
+    else
+      echo "Authenticated Failed - Disallow the commit by human. Please wait and follow the instructions."
+      return 1
+    fi
+  else
+    command git "$@"
+  fi
+}
 ```
 
 ## Platform Support
@@ -122,8 +122,10 @@ make clean
 # Install to system PATH
 make install
 
-# Create a release (tag + build)
-make release
+# Create releases with specific version bump
+make release-patch   # patch version
+make release-minor   # minor version
+make release-major   # major version
 ```
 
 ### Using Cargo Directly
@@ -167,7 +169,7 @@ make release-major
 1. ✅ Version bumped in `Cargo.toml` using semver
 2. ✅ Git tag created and pushed
 3. ✅ Published to crates.io
-4. ✅ GitHub release created with binaries
+4. ⚠️ GitHub release needs to be created manually
 
 ### Manual Release Steps
 
