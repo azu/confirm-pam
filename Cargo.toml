@@ -1,6 +1,6 @@
 [package]
 name = "confirm-pam"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2024"
 authors = ["azu <azuciao@gmail.com>"]
 description = "A CLI tool for biometric authentication confirmation"
