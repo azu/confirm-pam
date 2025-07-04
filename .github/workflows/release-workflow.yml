@@ -4,14 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       release_type:
-        description: 'Release type'
+        description: "Release type"
         required: true
-        default: 'patch'
+        default: "patch"
         type: choice
         options:
-        - patch
-        - minor
-        - major
+          - patch
+          - minor
+          - major
 
 permissions:
   contents: write
@@ -20,77 +20,71 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      with:
-        fetch-depth: 0
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Setup Node.js
-      uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
-      with:
-        node-version: '20'
+      - name: Setup Node.js
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        with:
+          node-version: "20"
 
-    - name: Install semver CLI
-      run: npm install -g semver
+      - name: Install semver CLI
+        run: npm install -g semver
 
-    - name: Get current version
-      id: current_version
-      run: |
-        CURRENT_VERSION=$(grep '^version = ' Cargo.toml | sed 's/version = "\(.*\)"/\1/')
-        echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-        echo "Current version: $CURRENT_VERSION"
+      - name: Get current version
+        id: current_version
+        run: |
+          CURRENT_VERSION=$(grep '^version = ' Cargo.toml | sed 's/version = "\(.*\)"/\1/')
+          echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $CURRENT_VERSION"
 
-    - name: Set release type
-      id: release_type
-      run: |
-        RELEASE_TYPE="${{ github.event.inputs.release_type }}"
-        echo "type=$RELEASE_TYPE" >> $GITHUB_OUTPUT
-        echo "Release type: $RELEASE_TYPE"
+      - name: Set release type
+        id: release_type
+        run: |
+          RELEASE_TYPE="${{ github.event.inputs.release_type }}"
+          echo "type=$RELEASE_TYPE" >> $GITHUB_OUTPUT
+          echo "Release type: $RELEASE_TYPE"
 
-    - name: Calculate new version
-      id: new_version
-      run: |
-        CURRENT_VERSION="${{ steps.current_version.outputs.current }}"
-        RELEASE_TYPE="${{ steps.release_type.outputs.type }}"
-        NEW_VERSION=$(semver -i $RELEASE_TYPE $CURRENT_VERSION)
-        
-        echo "new=$NEW_VERSION" >> $GITHUB_OUTPUT
-        echo "New version: $NEW_VERSION"
+      - name: Calculate new version
+        id: new_version
+        run: |
+          CURRENT_VERSION="${{ steps.current_version.outputs.current }}"
+          RELEASE_TYPE="${{ steps.release_type.outputs.type }}"
+          NEW_VERSION=$(semver -i $RELEASE_TYPE $CURRENT_VERSION)
 
-    - name: Update Cargo.toml
-      run: |
-        NEW_VERSION="${{ steps.new_version.outputs.new }}"
-        sed -i "s/^version = \".*\"/version = \"$NEW_VERSION\"/" Cargo.toml
-        echo "Updated Cargo.toml to version $NEW_VERSION"
+          echo "new=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_VERSION"
 
+      - name: Update Cargo.toml
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.new }}"
+          sed -i "s/^version = \".*\"/version = \"$NEW_VERSION\"/" Cargo.toml
+          echo "Updated Cargo.toml to version $NEW_VERSION"
 
-    - name: Commit version bump
-      run: |
-        NEW_VERSION="${{ steps.new_version.outputs.new }}"
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add Cargo.toml
-        git commit -m "chore: release v$NEW_VERSION
+      - name: Commit version bump
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.new }}"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add Cargo.toml
+          git commit -m "chore: release v$NEW_VERSION"
+      - name: Create and push tag
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.new }}"
+          git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
+          git push origin main
+          git push origin "v$NEW_VERSION"
 
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>"
-
-    - name: Create and push tag
-      run: |
-        NEW_VERSION="${{ steps.new_version.outputs.new }}"
-        git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
-        git push origin main
-        git push origin "v$NEW_VERSION"
-
-    - name: Trigger Homebrew update
-      run: |
-        NEW_VERSION="${{ steps.new_version.outputs.new }}"
-        # Wait a moment for the release workflow to complete
-        sleep 60
-        gh workflow run "Update Homebrew Formula" --field tag="v$NEW_VERSION"
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Trigger Homebrew update
+        run: |
+          NEW_VERSION="${{ steps.new_version.outputs.new }}"
+          # Wait a moment for the release workflow to complete
+          sleep 60
+          gh workflow run "Update Homebrew Formula" --field tag="v$NEW_VERSION"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
