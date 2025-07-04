@@ -1,8 +1,8 @@
 class ConfirmPam < Formula
   desc "A CLI tool for biometric authentication confirmation"
   homepage "https://github.com/azu/confirm-pam"
-  url "https://github.com/azu/confirm-pam/releases/download/v0.2.0/confirm-pam-macos-amd64.tar.gz"
-  sha256 "ab426d487246d10f4d3253b7adbcf579574a2edd39308d5b94ec19fc47da70de"
+  url "https://github.com/azu/confirm-pam/releases/download/v0.3.2/confirm-pam-macos-amd64.tar.gz"
+  sha256 "6d8fcd74313da538a5c0569769f6b527223e3424af217a2a4239a2cd8b15a35a"
   license "MIT"
 
   def install
