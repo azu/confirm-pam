@@ -18,9 +18,11 @@ permissions:
   pull-requests: write
 
 jobs:
-  release:
+  version-bump:
     runs-on: ubuntu-latest
-
+    outputs:
+      new_version: ${{ steps.new_version.outputs.new }}
+    
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -43,20 +45,12 @@ jobs:
           echo "current=$CURRENT_VERSION" >> $GITHUB_OUTPUT
           echo "Current version: $CURRENT_VERSION"
 
-      - name: Set release type
-        id: release_type
-        run: |
-          RELEASE_TYPE="${{ github.event.inputs.release_type }}"
-          echo "type=$RELEASE_TYPE" >> $GITHUB_OUTPUT
-          echo "Release type: $RELEASE_TYPE"
-
       - name: Calculate new version
         id: new_version
         run: |
           CURRENT_VERSION="${{ steps.current_version.outputs.current }}"
-          RELEASE_TYPE="${{ steps.release_type.outputs.type }}"
+          RELEASE_TYPE="${{ github.event.inputs.release_type }}"
           NEW_VERSION=$(semver -i $RELEASE_TYPE $CURRENT_VERSION)
-
           echo "new=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "New version: $NEW_VERSION"
 
@@ -73,6 +67,7 @@ jobs:
           git config --local user.name "GitHub Action"
           git add Cargo.toml
           git commit -m "chore: release v$NEW_VERSION"
+
       - name: Create and push tag
         run: |
           NEW_VERSION="${{ steps.new_version.outputs.new }}"
@@ -80,11 +75,95 @@ jobs:
           git push origin main
           git push origin "v$NEW_VERSION"
 
-      - name: Trigger Homebrew update
+  release-binaries:
+    needs: version-bump
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: "v${{ needs.version-bump.outputs.new_version }}"
+      
+      - name: Install Rust
+        uses: actions-rust-lang/setup-rust-toolchain@fb51252c7ba57d633bc668f941da052e410add48 # v1.13.0
+        with:
+          toolchain: stable
+      
+      - name: Build release binary
+        run: cargo build --release
+      
+      - name: Create release archive
         run: |
-          NEW_VERSION="${{ steps.new_version.outputs.new }}"
-          # Wait a moment for the release workflow to complete
-          sleep 60
-          gh workflow run "Update Homebrew Formula" --field tag="v$NEW_VERSION"
+          mkdir -p dist
+          cp target/release/confirm-pam dist/
+          cd dist
+          tar -czf confirm-pam-macos-amd64.tar.gz confirm-pam
+          shasum -a 256 confirm-pam-macos-amd64.tar.gz > confirm-pam-macos-amd64.tar.gz.sha256
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
+        with:
+          tag_name: "v${{ needs.version-bump.outputs.new_version }}"
+          files: |
+            dist/confirm-pam-macos-amd64.tar.gz
+            dist/confirm-pam-macos-amd64.tar.gz.sha256
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  update-homebrew:
+    needs: [version-bump, release-binaries]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Get release info
+        id: release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="v${{ needs.version-bump.outputs.new_version }}"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          
+          # Construct download URL directly
+          DOWNLOAD_URL="https://github.com/azu/confirm-pam/releases/download/$TAG/confirm-pam-macos-amd64.tar.gz"
+          echo "Download URL: $DOWNLOAD_URL"
+          
+          # Download and calculate SHA256
+          curl -sL "$DOWNLOAD_URL" -o temp.tar.gz
+          if [ ! -f temp.tar.gz ]; then
+            echo "Failed to download $DOWNLOAD_URL"
+            exit 1
+          fi
+          
+          SHA256=$(shasum -a 256 temp.tar.gz | cut -d' ' -f1)
+          echo "SHA256: $SHA256"
+          rm temp.tar.gz
+          
+          echo "asset_url=$DOWNLOAD_URL" >> $GITHUB_OUTPUT
+          echo "sha256=$SHA256" >> $GITHUB_OUTPUT
+          echo "version=${{ needs.version-bump.outputs.new_version }}" >> $GITHUB_OUTPUT
+
+      - name: Update Formula
+        run: |
+          # Update the formula file
+          sed -i "s|url \".*\"|url \"${{ steps.release.outputs.asset_url }}\"|" Formula/confirm-pam.rb
+          sed -i "s|sha256 \".*\"|sha256 \"${{ steps.release.outputs.sha256 }}\"|" Formula/confirm-pam.rb
+          
+          # Show the changes
+          echo "Updated Formula:"
+          cat Formula/confirm-pam.rb
+
+      - name: Commit and push formula update
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add Formula/confirm-pam.rb
+          git commit -m "chore: update Homebrew formula to ${{ steps.release.outputs.tag }}"
+          git push origin main
