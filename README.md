@@ -135,6 +135,39 @@ cargo fmt
 cargo clippy
 ```
 
+## Release Process
+
+This project uses automated CI/CD for releases:
+
+### Automated Steps
+
+1. **Create Release**: Tag and push creates GitHub release with binaries
+   ```bash
+   git tag v0.x.x
+   git push origin v0.x.x
+   ```
+
+2. **GitHub Actions**: Automatically builds and publishes release assets
+
+### Manual Steps
+
+3. **Update Homebrew Formula** (Manual trigger required):
+   - Go to [Actions → Update Homebrew Formula](https://github.com/azu/confirm-pam/actions/workflows/update-homebrew.yml)
+   - Click "Run workflow"
+   - Enter the release tag (e.g., `v0.2.0`)
+   - This creates a PR to update the formula with new URL and SHA256
+
+4. **Merge Formula PR**: Review and merge the auto-generated PR to complete Homebrew update
+
+### Release Checklist
+
+- [ ] Update `CHANGELOG.md`
+- [ ] Bump version in `Cargo.toml`
+- [ ] Create and push git tag
+- [ ] Wait for GitHub Actions to complete
+- [ ] Manually trigger Homebrew formula update
+- [ ] Merge the generated Homebrew formula PR
+
 ## Contributing
 
 Contributions are welcome! Please see the [open issues](https://github.com/azu/confirm-pam/issues) for planned features and improvements.

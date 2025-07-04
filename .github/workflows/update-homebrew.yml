@@ -34,14 +34,22 @@ jobs:
         
         # Get the release asset URL and SHA256
         RELEASE_INFO=$(gh release view "$TAG" --json assets)
-        ASSET_URL=$(echo "$RELEASE_INFO" | jq -r '.assets[] | select(.name | contains("macos-amd64.tar.gz")) | .url')
+        echo "Release info: $RELEASE_INFO"
+        
+        # Get download URL (browserDownloadUrl)
+        ASSET_URL=$(echo "$RELEASE_INFO" | jq -r '.assets[] | select(.name | contains("macos-amd64.tar.gz") and (.name | endswith(".tar.gz"))) | .url')
+        echo "Asset URL: $ASSET_URL"
+        
+        # Convert to download URL
+        DOWNLOAD_URL="https://github.com/azu/confirm-pam/releases/download/$TAG/confirm-pam-macos-amd64.tar.gz"
+        echo "Download URL: $DOWNLOAD_URL"
         
         # Download and calculate SHA256
-        curl -sL "$ASSET_URL" -o temp.tar.gz
+        curl -sL "$DOWNLOAD_URL" -o temp.tar.gz
         SHA256=$(shasum -a 256 temp.tar.gz | cut -d' ' -f1)
         rm temp.tar.gz
         
-        echo "asset_url=$ASSET_URL" >> $GITHUB_OUTPUT
+        echo "asset_url=$DOWNLOAD_URL" >> $GITHUB_OUTPUT
         echo "sha256=$SHA256" >> $GITHUB_OUTPUT
         echo "version=${TAG#v}" >> $GITHUB_OUTPUT
 
