@@ -1,4 +1,4 @@
-use super::BiometricAuthenticator;
+use crate::auth::BiometricAuthenticator;
 use anyhow::Result;
 use std::ffi::CString;
 

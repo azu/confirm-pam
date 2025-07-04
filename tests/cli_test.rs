@@ -1,9 +1,17 @@
 use std::process::Command;
+use std::env;
 
 #[test]
 fn test_missing_argument() {
-    let output = Command::new("cargo")
-        .args(&["run", "--"])
+    let exe_path = env::current_exe()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .join("confirm-pam");
+        
+    let output = Command::new(&exe_path)
         .output()
         .expect("Failed to execute command");
 
@@ -16,8 +24,16 @@ fn test_missing_argument() {
 
 #[test]
 fn test_help_message() {
-    let output = Command::new("cargo")
-        .args(&["run", "--", "--help"])
+    let exe_path = env::current_exe()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .join("confirm-pam");
+        
+    let output = Command::new(&exe_path)
+        .args(&["--help"])
         .output()
         .expect("Failed to execute command");
 
@@ -28,8 +44,16 @@ fn test_help_message() {
 
 #[test]
 fn test_version() {
-    let output = Command::new("cargo")
-        .args(&["run", "--", "--version"])
+    let exe_path = env::current_exe()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .join("confirm-pam");
+        
+    let output = Command::new(&exe_path)
+        .args(&["--version"])
         .output()
         .expect("Failed to execute command");
 

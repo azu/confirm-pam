@@ -1,0 +1,13 @@
+# Platform-specific code ownership
+/src/platform/macos/    @macos-team
+/src/platform/linux/    @linux-team
+/src/platform/windows/  @windows-team
+
+# Build configuration
+/build.rs               @build-team
+
+# Core authentication logic
+/src/auth/              @security-team
+
+# Documentation
+*.md                    @docs-team

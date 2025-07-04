@@ -3,6 +3,7 @@ use clap::Parser;
 use std::process;
 
 mod auth;
+mod platform;
 use auth::{BiometricAuthenticator, PlatformAuthenticator};
 
 #[derive(Parser, Debug)]
