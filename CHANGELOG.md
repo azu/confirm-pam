@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2025-01-04
+
+### Added
+- Automated Homebrew formula update via GitHub Actions
+- CI workflow now automatically updates formula when releases are published
+- Manual trigger option for Homebrew formula updates
+- Documentation for automated CI Homebrew update process
+
+### Changed
+- Switched to `actions-rust-lang/setup-rust-toolchain` from `dtolnay/rust-toolchain`
+- Improved GitHub Actions security with pinned action versions
+
+### Fixed
+- Resolved pinact toolchain parsing issues
+
 ## [0.1.1] - 2025-01-04
 
 ### Changed

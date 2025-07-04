@@ -1,5 +1,5 @@
-use std::process::Command;
 use std::env;
+use std::process::Command;
 
 #[test]
 fn test_missing_argument() {
@@ -10,7 +10,7 @@ fn test_missing_argument() {
         .parent()
         .unwrap()
         .join("confirm-pam");
-        
+
     let output = Command::new(&exe_path)
         .output()
         .expect("Failed to execute command");
@@ -31,7 +31,7 @@ fn test_help_message() {
         .parent()
         .unwrap()
         .join("confirm-pam");
-        
+
     let output = Command::new(&exe_path)
         .args(&["--help"])
         .output()
@@ -51,7 +51,7 @@ fn test_version() {
         .parent()
         .unwrap()
         .join("confirm-pam");
-        
+
     let output = Command::new(&exe_path)
         .args(&["--version"])
         .output()
