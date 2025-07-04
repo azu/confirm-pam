@@ -1,0 +1,20 @@
+[package]
+name = "confirm-pam"
+version = "0.1.0"
+edition = "2024"
+authors = ["azu <azuciao@gmail.com>"]
+description = "A CLI tool for biometric authentication confirmation"
+license = "MIT"
+repository = "https://github.com/azu/confirm-pam"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+anyhow = "1.0"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+
+[target.'cfg(target_os = "linux")'.dependencies]
+pam = "0.8"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows = { version = "0.58", features = ["Win32_Security_Credentials", "Security_Credentials_UI"] }

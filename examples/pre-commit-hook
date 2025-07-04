@@ -1,0 +1,35 @@
+#!/bin/bash
+# Example pre-commit hook that requires Touch ID authentication for --no-verify
+#
+# Installation:
+# 1. Copy this file to .git/hooks/pre-commit
+# 2. Make it executable: chmod +x .git/hooks/pre-commit
+# 3. Make sure confirm-pam is in your PATH
+
+# Check if running with --no-verify
+if [ -n "$SKIP_VERIFY" ] || git rev-parse --verify HEAD >/dev/null 2>&1 && [ "$1" = "--no-verify" ]; then
+    echo "⚠️  Attempting to bypass pre-commit hooks with --no-verify"
+    
+    # Require Touch ID authentication
+    if ! confirm-pam "Allow bypassing git hooks with --no-verify?"; then
+        echo "❌ Touch ID authentication required to use --no-verify"
+        echo "💡 Tip: Remove --no-verify to run normal commit with hooks"
+        exit 1
+    fi
+    
+    echo "✅ Touch ID authenticated - bypassing hooks"
+    exit 0
+fi
+
+# Normal pre-commit checks go here
+echo "Running pre-commit hooks..."
+
+# Example: Check for trailing whitespace
+if git diff --cached --check; then
+    echo "✅ No trailing whitespace found"
+else
+    echo "❌ Trailing whitespace detected. Please fix before committing."
+    exit 1
+fi
+
+# Add more pre-commit checks as needed

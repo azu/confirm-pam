@@ -1,0 +1,39 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build and Release
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+    
+    - name: Build release binary
+      run: cargo build --release
+    
+    - name: Create release archive
+      run: |
+        mkdir -p dist
+        cp target/release/confirm-pam dist/
+        cd dist
+        tar -czf confirm-pam-macos-amd64.tar.gz confirm-pam
+        shasum -a 256 confirm-pam-macos-amd64.tar.gz > confirm-pam-macos-amd64.tar.gz.sha256
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          dist/confirm-pam-macos-amd64.tar.gz
+          dist/confirm-pam-macos-amd64.tar.gz.sha256
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
