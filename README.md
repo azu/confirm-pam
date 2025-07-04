@@ -31,9 +31,14 @@ sudo cp target/release/confirm-pam /usr/local/bin/
 ### Homebrew
 
 ```bash
+# One-liner install
+brew tap azu/confirm-pam https://github.com/azu/confirm-pam && brew install azu/confirm-pam/confirm-pam
+```
+
+Or step by step:
+```bash
 # Add the tap
 brew tap azu/confirm-pam https://github.com/azu/confirm-pam
-
 # Install
 brew install azu/confirm-pam/confirm-pam
 ```
