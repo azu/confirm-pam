@@ -1,4 +1,4 @@
-name: Auto Release
+name: Create Release
 
 on:
   workflow_dispatch:
@@ -18,7 +18,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  auto-release:
+  release:
     runs-on: ubuntu-latest
     
     steps:

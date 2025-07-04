@@ -141,8 +141,8 @@ This project uses **fully automated releases** via GitHub Actions:
 
 ### Automated Release (Recommended)
 
-1. **Trigger Auto Release**:
-   - Go to [Actions → Auto Release](https://github.com/azu/confirm-pam/actions/workflows/auto-release.yml)
+1. **Trigger Release Workflow**:
+   - Go to [Actions → Create Release](https://github.com/azu/confirm-pam/actions/workflows/release-workflow.yml)
    - Click "Run workflow"
    - Select release type: `patch`, `minor`, or `major`
    - Click "Run workflow"
