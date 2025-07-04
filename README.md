@@ -151,13 +151,14 @@ This project uses automated CI/CD for releases:
 
 ### Manual Steps
 
-3. **Update Homebrew Formula** (Manual trigger required):
+3. **Update Homebrew Formula** (Semi-automated):
    - Go to [Actions → Update Homebrew Formula](https://github.com/azu/confirm-pam/actions/workflows/update-homebrew.yml)
    - Click "Run workflow"
    - Enter the release tag (e.g., `v0.2.0`)
-   - This creates a PR to update the formula with new URL and SHA256
+   - This creates a branch with updated formula
+   - Manually create PR from the generated branch: `gh pr create --base main --head update-homebrew-X.X.X`
 
-4. **Merge Formula PR**: Review and merge the auto-generated PR to complete Homebrew update
+4. **Merge Formula PR**: Review and merge the PR to complete Homebrew update
 
 ### Release Checklist
 
