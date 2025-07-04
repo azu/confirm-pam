@@ -137,37 +137,50 @@ cargo clippy
 
 ## Release Process
 
-This project uses automated CI/CD for releases:
+This project uses **fully automated releases** via GitHub Actions:
 
-### Automated Steps
+### Automated Release (Recommended)
 
-1. **Create Release**: Tag and push creates GitHub release with binaries
+1. **Trigger Auto Release**:
+   - Go to [Actions → Auto Release](https://github.com/azu/confirm-pam/actions/workflows/auto-release.yml)
+   - Click "Run workflow"
+   - Select release type: `patch`, `minor`, or `major`
+   - Click "Run workflow"
+
+2. **What happens automatically**:
+   - ✅ Version bumped in `Cargo.toml`
+   - ✅ `CHANGELOG.md` updated with recent commits
+   - ✅ Git tag created and pushed
+   - ✅ GitHub release with binaries created
+   - ✅ Homebrew formula update triggered
+
+3. **Final manual step**:
+   - Review and merge the auto-generated Homebrew formula PR
+
+### Manual Release (Legacy)
+
+<details>
+<summary>For manual control over release process</summary>
+
+1. **Manual Steps**:
    ```bash
+   # Update version and changelog manually
    git tag v0.x.x
    git push origin v0.x.x
    ```
 
-2. **GitHub Actions**: Automatically builds and publishes release assets
-
-### Manual Steps
-
-3. **Update Homebrew Formula** (Semi-automated):
+2. **Homebrew Update**:
    - Go to [Actions → Update Homebrew Formula](https://github.com/azu/confirm-pam/actions/workflows/update-homebrew.yml)
-   - Click "Run workflow"
-   - Enter the release tag (e.g., `v0.2.0`)
-   - This creates a branch with updated formula
-   - Manually create PR from the generated branch: `gh pr create --base main --head update-homebrew-X.X.X`
+   - Enter release tag and run workflow
+   - Create PR from generated branch: `gh pr create --base main --head update-homebrew-X.X.X`
 
-4. **Merge Formula PR**: Review and merge the PR to complete Homebrew update
+</details>
 
-### Release Checklist
+### Release Types
 
-- [ ] Update `CHANGELOG.md`
-- [ ] Bump version in `Cargo.toml`
-- [ ] Create and push git tag
-- [ ] Wait for GitHub Actions to complete
-- [ ] Manually trigger Homebrew formula update
-- [ ] Merge the generated Homebrew formula PR
+- **patch** (0.1.0 → 0.1.1): Bug fixes, small improvements
+- **minor** (0.1.0 → 0.2.0): New features, enhancements  
+- **major** (0.1.0 → 1.0.0): Breaking changes, major releases
 
 ## Contributing
 
