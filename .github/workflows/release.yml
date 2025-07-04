@@ -11,10 +11,10 @@ jobs:
     runs-on: macos-latest
     
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
     
     - name: Install Rust
-      uses: dtolnay/rust-toolchain@stable
+      uses: dtolnay/rust-toolchain@b3b07ba8b418998c39fb20f53e8b695cdcc8de1b # v1
     
     - name: Build release binary
       run: cargo build --release
@@ -28,7 +28,7 @@ jobs:
         shasum -a 256 confirm-pam-macos-amd64.tar.gz > confirm-pam-macos-amd64.tar.gz.sha256
     
     - name: Create Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844 # v0.1.15
       with:
         files: |
           dist/confirm-pam-macos-amd64.tar.gz
