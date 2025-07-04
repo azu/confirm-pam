@@ -5,10 +5,10 @@ mod linux;
 #[cfg(target_os = "windows")]
 mod windows;
 
-#[cfg(target_os = "linux")]
-pub use linux::LinuxAuthenticator as PlatformAuthenticator;
 #[cfg(target_os = "macos")]
 pub use crate::platform::macos::auth::MacOSAuthenticator as PlatformAuthenticator;
+#[cfg(target_os = "linux")]
+pub use linux::LinuxAuthenticator as PlatformAuthenticator;
 #[cfg(target_os = "windows")]
 pub use windows::WindowsAuthenticator as PlatformAuthenticator;
 
