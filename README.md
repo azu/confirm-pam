@@ -28,10 +28,14 @@ cargo build --release
 sudo cp target/release/confirm-pam /usr/local/bin/
 ```
 
-### Homebrew (coming soon)
+### Homebrew
 
 ```bash
-brew install azu/tap/confirm-pam
+# Add the tap
+brew tap azu/confirm-pam https://github.com/azu/confirm-pam
+
+# Install
+brew install azu/confirm-pam/confirm-pam
 ```
 
 ## Usage
