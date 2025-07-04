@@ -19,6 +19,8 @@ jobs:
     
     - name: Install Rust
       uses: dtolnay/rust-toolchain@b3b07ba8b418998c39fb20f53e8b695cdcc8de1b # v1
+      with:
+        toolchain: stable
     
     - name: Run tests
       run: cargo test
