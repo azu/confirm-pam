@@ -10,9 +10,9 @@ A CLI tool for biometric authentication confirmation.
 $ confirm-pam "Allow commit with --no-verify?";
 ```
 
-shows follwing dialog:
+shows following dialog:
 
-![`confirm-pam "Allow commit with --no-verify?";`](docs/digloa.png)
+![`confirm-pam "Allow commit with --no-verify?";`](./docs/dialog.png)
 
 ## Features
 
