@@ -6,6 +6,14 @@ A CLI tool for biometric authentication confirmation.
 
 `confirm-pam` is a command-line tool that provides biometric authentication (fingerprint/Touch ID) confirmation prompts. It's designed to prevent automated tools (including AI agents) from bypassing security checks like `git commit --no-verify`.
 
+```
+$ confirm-pam "Allow commit with --no-verify?";
+```
+
+shows follwing dialog:
+
+![`confirm-pam "Allow commit with --no-verify?";`](docs/digloa.png)
+
 ## Features
 
 - ✅ Touch ID authentication on macOS
@@ -62,6 +70,8 @@ fi
 ### Git Hook Example
 
 Override `git` command to include confirmation prompts.
+
+![git commit --no-verify example](./docs/no-verify.png)
 
 zsh example:
 
