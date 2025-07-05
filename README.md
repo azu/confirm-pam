@@ -181,28 +181,6 @@ make release-major
 3. ✅ Published to crates.io
 4. ⚠️ GitHub release needs to be created manually
 
-### Manual Release Steps
-
-<details>
-<summary>For manual control over release process</summary>
-
-```bash
-# 1. Update version manually in Cargo.toml
-# 2. Commit and tag
-git add Cargo.toml
-git commit -m "chore: release v0.x.x"
-git tag v0.x.x
-git push origin main
-git push origin v0.x.x
-
-# 3. Publish to crates.io
-cargo publish
-
-# 4. Create GitHub release (manual via web interface)
-```
-
-</details>
-
 ## Contributing
 
 Contributions are welcome! Please see the [open issues](https://github.com/azu/confirm-pam/issues) for planned features and improvements.
@@ -210,7 +188,3 @@ Contributions are welcome! Please see the [open issues](https://github.com/azu/c
 ## License
 
 MIT License - See [LICENSE](LICENSE) file for details
-
-## Acknowledgments
-
-This project was inspired by the need to add human verification to automated development workflows, particularly to prevent AI tools from bypassing security measures.
